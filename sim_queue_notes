@@ -1,0 +1,26 @@
+Simulations should include:
+    . assumptions
+        .. ⋋ < µ for stability
+
+    . open system
+        .. multiple/random number of requests send to a server
+        .. server does some work on each process
+
+    . closed system
+        .. concretely model requests and responses
+        .. 
+
+    . scheduling policies
+        .. shortest job first (sjf)
+        .. shortest remaining processing time (srpt)
+        .. first scheduled first served (fsfs)
+        .. round robin 
+        .. random
+
+    . parameters to base comparisions upon
+        .. response time
+        .. turnaround time
+        .. time in system
+        .. flow time
+        .. waiting time
+        .. number of jobs in queue
