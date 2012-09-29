@@ -25,7 +25,10 @@ function compare (val1, val2) {
 http.createServer(function (req, res) {
     requestPool.push({fn: function () {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Sample of Shortest Job First (SJF) strategy' + '\n' + 'Request size: ' + req.url);
+    res.write('Job Id# ' + count +'\n');
+    setTimeout(function() {
+        res.end('Job ended');
+        }, 2000);
     }, size: req.url.substring(1)});
   count += 1; 
   process.stdout.write('Requests received till now: ' + count + '\n');

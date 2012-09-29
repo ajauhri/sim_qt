@@ -1,19 +1,12 @@
 var httpProxy = require('./node_modules/http-proxy/lib/node-http-proxy');
-//
-// A simple round-robin load balancing strategy.
-// 
-// First, list the servers you want to use in your rotation.
-//
+
 var addresses = [
   {
     host: 'localhost',
-    port: 3000 
+    port: 3001 
   }];
 
 httpProxy.createServer(function (req, res, proxy) {
-  //
-  // On each request, get the first location from the list...
-  //
   var target = addresses.shift();
 
   //
@@ -26,7 +19,7 @@ httpProxy.createServer(function (req, res, proxy) {
   // ...and then the server you just used becomes the last item in the list.
   //
   addresses.push(target);
-}).listen(8000);
+}).listen(3000);
 
 // Rinse; repeat; enjoy.
 

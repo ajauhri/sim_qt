@@ -5,10 +5,10 @@ Simulations should include:
     . open system
         .. multiple/random number of requests send to a server
         .. server does some work on each process
+        .. new jobs arrive independently 
 
     . closed system
-        .. concretely model requests and responses
-        .. 
+        .. new job arrivals are only triggered by job completions (followed by think time)
 
     . scheduling policies
         .. shortest job first (sjf)
@@ -17,10 +17,14 @@ Simulations should include:
         .. round robin 
         .. random
 
-    . parameters to base comparisions upon
+    . parameters to base comparisons upon
         .. response time
         .. turnaround time
         .. time in system
         .. flow time
         .. waiting time
         .. number of jobs in queue
+
+    . facts 
+        .. for a given load the mean response time in a closed system is significantly less than in open systems (http://static.usenix.org/events/nsdi06/tech/full_papers/schroeder/schroeder.pdf)
+        ..  

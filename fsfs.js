@@ -16,7 +16,10 @@ var requestPool = [],
 http.createServer(function (req, res) {
   requestPool.push(function () {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Sample of First Scheduled First Served(FSFS) strategy' + '\n' + 'Request size: ' + req.url);
+    res.write('Job id:' + count + '\n');
+    setTimeout(function() {
+         res.end('Job ended\n');
+    }, 2000);
   });
   count += 1; 
   process.stdout.write('Requests received till now: ' + count + '\n');
@@ -28,3 +31,4 @@ http.createServer(function (req, res) {
 
 util.puts('http proxy server started on port ' + httpProxyServerPort);
 util.puts('http server started on port ' + httpServerPort);
+
