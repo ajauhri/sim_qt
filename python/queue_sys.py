@@ -3,47 +3,92 @@
 import time, threading
 from threading import Thread
 from urllib2 import urlopen
-from Queue import Queue
 
-class ClosedSystem(object):
-    def __init__(self, _n=2):
+# base class for all types of systems
+class System(object):
+    def __init__(self, _n):
         self._n = _n
-        self._queue = Queue(_n)
         self._threads = list()
-    
-    def dowork(self):
-        url = self._queue.get()
-        response = urlopen(url) 
-        #when task is done - 200 response spend some thinking time then again send another request
-    
-        #get the response 
+
+### OpenSystem ###
+class OpenSystem(System):
+    def __init__(self, _n=2):
+        super(OpenSystem, self).__init__(_n)
+
+    def dowork(self, url):
+        response = urlopen(url)
+        data = response.read()
+        print data
+        
+    def start(self,url):
+        while 1:
+            for i in range(self._n):
+                t = Thread(target=self.dowork, args=(url,))
+                t.daemon = True
+                self._threads.append(t)
+            for i in range(len(self._threads)):
+                self._threads.pop().start()
+
+### ClosedBatchSystem ###
+class ClosedBatchSystem(System):
+    def __init__(self, _n=2):
+        super(ClosedBatchSystem, self).__init__(_n) 
+
+    def dowork(self, url):
+        response = urlopen(url)
         while 1:
             data = response.read()
             print data
             if not data:
                 break
-        self._queue.task_done()
- 
-    # 1. initializes `n` threads
-    # 2. initializes the queue with urls
-    def setup(self):
-        for i in range(self._n):
-            t = Thread(target=self.dowork) 
-            t.daemon = True 
-            self._threads.append(t)
+
+    def start(self, url):
+        while 1:
+            for i in range(self._n):
+                t = Thread(target=self.dowork, args=(url,))
+                t.daemon = True
+                self._threads.append(t)
+
+            for i in range(self._n):
+                self._threads.pop().start()
+           
+            # ensures that new set of jobs are sent ONLY when the first batch has been completed
+            while threading.active_count() != 1:
+                time.sleep(1)
+                
+            # thinking time begins here
+            # Don't need to account for this in a CBS
         
-        for i in range(self._n):
-            self._queue.put('http://localhost:3001')
-    
-    def start(self):
-        for i in range(self._n):
-            self._threads[i].start()
-        while threading.active_count() > 0:
-            time.sleep(1)
+### ClosedInterativeSystems ###
+class ClosedInteractiveSystem(System):
+    def __init__(self, _n=2):
+        super(ClosedInteractiveSystem, self).__init__(_n) 
+
+    def dowork(self, url):
+        response = urlopen(url)
+        while True:
+            data = response.read()
+            print data
+            if not data:
+                break
+
+    def start(self, url):
+        while 1:
+            for i in range(len(self._threads), self._n):
+                t = Thread(target=self.dowork,args=(url,))
+                t.daemon = True
+                self._threads.append(t)
+
+            for i in range(len(self._threads)):
+                self._threads.pop().start()
+           
+            while threading.active_count() == self._n + 1:
+                time.sleep(.1)
+                
+
 def main():
-    a = ClosedSystem(10)
-    a.setup()
-    a.start()
+    a = ClosedInteractiveSystem(10)
+    a.start('http://localhost:3000')
 
 if __name__ == "__main__":
     main()

@@ -19,10 +19,12 @@ http.createServer(function (req, res) {
     res.write('Job id:' + count + '\n');
     setTimeout(function() {
          res.end('Job ended\n');
+         count -= 1;
+         process.stdout.write(count +'\n');
     }, 2000);
   });
   count += 1; 
-  process.stdout.write('Requests received till now: ' + count + '\n');
+  process.stdout.write('Requests active now: ' + count + '\n');
   
    while (requestPool.length) {
       requestPool.shift()();
